@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <!--    Report Template-->
+    <template id="tvc_report_templates">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <div class="text-center">
+                            <h1>
+                                <u>طلب صرف مستحقات الإجازة</u>
+                            </h1>
+							<br/>
+                            <h1>
+                                <u>Request of Leave payment</u>
+                            </h1>
+                            <h1>
+                                <u><span t-field="o.number"/></u>
+                            </h1>
+                        </div>
+						<table class="table table-sm table-bordered">
+							<tr>
+								<td><strong>اسم الموظف</strong></td>
+								<td><span t-field="o.employee_id"/></td>
+								<td><strong>رقم الهوية</strong></td>
+								<td><span t-field="o.employee_id.identification_id"/></td>
+							</tr>
+							<tr>
+								<td><strong>القسم</strong></td>
+								<td><span t-field="o.employee_id.department_id"/></td>
+								<td><strong>الوظيفة</strong></td>
+								<td><span t-field="o.employee_id.job_id"/></td>
+							</tr>
+							<tr>
+								<td><strong>تاريخ الانضمام</strong></td>
+								<td><span t-field="o.joined_date"/></td>
+								<td><strong>أخر يوم عمل</strong></td>
+								<td><span t-field="o.last_working_date"/></td>
+							</tr>
+							<tr>
+								<td><strong>اجمالي أيام الخدمه</strong></td>
+								<td><span t-field="o.total_service_days"/></td>
+								<td><strong>الرصيد المتبقي من الإجازة القانونية</strong></td>
+								<td><span t-field="o.legal_leave_remaining_balance"/></td>
+							</tr>
+						</table>
+
+						<table class="table table-sm table-bordered">
+							<tr>
+								<td colspan="2"><strong>تفاصيل الراتب</strong></td>
+								<td colspan="2"><strong>تفاصيل حسابات الرصيد</strong></td>
+							</tr>
+							<tr>
+								<td><strong>المرتب الأساسي</strong></td>
+								<td><span t-field="o.wage"/></td>
+								
+								<td><strong>عدد أيام العمل خلال الشهر الأخير</strong></td>
+								<td><span t-field="o.number_of_days_lastm"/></td>
+							</tr>
+							<tr>
+								<td><strong>بدل السكن</strong></td>
+								<td><span t-field="o.hra"/></td>
+								<td><strong>اجمالي رصيد الاجازات</strong></td>
+								<td><span t-field="o.totalvb"/></td>
+							</tr>
+							<tr>
+								
+								<td><strong>بدل نقل</strong></td>
+								<td><span t-field="o.travel_allowance"/></td>
+								<td><strong>علاوات أخرى</strong></td>
+								<td><span t-field="o.other_al"/></td>
+							</tr>
+							<tr>
+								<td><strong>بدلات الغلاء</strong></td>
+								<td><span t-field="o.da"/></td>
+								<td><strong>خصومات أخرى</strong></td>
+								<td><span t-field="o.other_dd"/></td>
+							</tr>
+							<tr>
+								<td><strong>بدل طعام</strong></td>
+								<td><span t-field="o.meal_allowance"/></td>
+								<td><strong>مكافئة نهاية الخدمة</strong></td>
+								<td><span t-field="o.end_of_service_topay"/></td>
+							</tr>
+							<tr>
+								<td><strong>بدل علاج</strong></td>
+								<td><span t-field="o.medical_allowance"/></td>
+								<td><strong>خصم ال GOSI</strong></td>
+								<td><span t-field="o.gosi_ded"/></td>
+							</tr>
+							<tr>
+
+								<td><strong>بدلات أخرى</strong></td>
+								<td><span t-field="o.other_allowance"/></td>
+								<td><strong>خصم ال GOSI</strong></td>
+								<td><span t-field="o.gosi_ded"/></td>
+							</tr>
+							<tr>
+								<td><strong>الاجمالي</strong></td>
+								<td><span t-field="o.total"/></td>
+								<td><strong>المبلغ المستحق لايام العمل خلال الشهر الأخير</strong></td>
+								<td><span t-field="o.amount4lm_days"/></td>
+
+							</tr>
+							<tr>
+								<td><strong>المبلغ المستحق لاجمالي رصيد الاجازات</strong></td>
+								<td><span t-field="o.amount4tvb"/></td>
+								<td><strong>الإجمالي النهائي</strong></td>
+								<td><span t-field="o.amount_total"/></td>
+							</tr>
+							
+							<tr t-if='o.note'>
+								<td colspan="4">ملاحظات</td>
+							</tr>						
+							<tr t-if='o.note'>
+								<td colspan="4"><span t-field="o.note"/></td>	
+							</tr> 
+						</table>
+						<div style="display: inline-table; width:100%;font-size:12px;text-align: center">
+							<div class="row">
+								<div class="column" style="width:33.33%;">
+									<strong>شؤون الموظفين</strong>
+									<br></br>
+									<br></br>
+									<p>_____________________</p>
+								</div>
+								<div class="column" style="width:33.33%;">
+									<strong>المدير المالي</strong>
+									<br></br>
+									<br></br>
+									<p>_____________________</p>
+								</div>
+								<div class="column" style="width:33.33%;">
+									<strong>مدير إدارة الموارد البشرية</strong>
+									<br></br>
+									<br></br>
+									<p>_____________________</p>
+									<p/>
+								</div>
+							</div>
+						</div>
+						
+						<br/>
+						<br/>
+						<br/>
+						<div style="display: inline-table; width:100%;font-size:12px;text-align: center">
+							<div class="row">
+								<div class="column" style="width:100%;">
+									<strong>    إبراء ذمة أقر بأني استلمت جميع مستحقاتي المذكورة آعلاه قبل الخروج للإجازة السنوية علماً أن أخر يوم عمل لي قبل السفر هو:</strong>
+									<br/>
+									<strong>       /        /           </strong>
+									
+								</div>
+							</div>
+							<div style="display: inline-table; width:100%;font-size:12px;text-align: center">
+								<div class="row">
+									<div class="column" style="width:33.33%;">
+										<strong>اسم الموظف</strong>
+										<br></br>
+										<br></br>
+										<p>_____________________</p>
+									</div>
+									<div class="column" style="width:33.33%;">
+										<strong>التوقيع</strong>
+										<br></br>
+										<br></br>
+										<p>_____________________</p>
+									</div>
+									<div class="column" style="width:33.33%;">
+										<strong>التاريخ</strong>
+										<br></br>
+										<br></br>
+										<p>_____________________</p>
+										<p/>
+									</div>
+								</div>
+							</div>
+						</div>
+	
+					</div>
+				</t>
+			</t>
+		</t>
+    </template>
+</odoo>

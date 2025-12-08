@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- نموذج طلب تذكرة الطيران -->
+        <record id="view_air_ticket_request_form" model="ir.ui.view">
+            <field name="name">air.ticket.request.form</field>
+            <field name="model">air.ticket.request</field>
+            <field name="arch" type="xml">
+                <form string="Air Ticket Request">
+                    <header>
+                        <button name="review" string="مراجعة البيانات" invisible="state != 'new'" type="object" class="oe_highlight" confirm="هل أنت متأكد أنك راجعت طلب تذكرة الطيران هذا؟" groups="mowzf_hrms.group_air_ticket_review"/>
+                        <button name="approve" string="الموافقة النهائية" invisible="state != 'reviewed'" type="object" class="oe_highlight" confirm="هل أنت متأكد أنك تريد الموافقة على طلب تذكرة الطيران هذا؟" groups="mowzf_hrms.group_air_ticket_approve"/>
+                        <button name="refuse" string="رفض" invisible="state not in ('new', 'reviewed')" type="object" confirm="هل أنت متأكد أنك تريد رفض طلب تذكرة الطيران هذا؟" groups="mowzf_hrms.group_air_ticket_refuse"/>
+                        <button name="refuse" string="رفض" invisible="state != 'approved'" type="object" confirm="هل أنت متأكد أنك تريد رفض طلب تذكرة الطيران هذا، إذا كان هناك أي تخصيص لتذاكر طيران تم إنشاؤه من خلال هذا الطلب، فسيقوم النظام تلقائيًا برفضه." groups="mowzf_hrms.group_air_ticket_refuse"/>
+                        <button name="reset" string="إعادة التعيين إلى جديد" invisible="state not in ('refused', 'reviewed')" type="object" confirm="هل أنت متأكد أنك تريد تعيين طلب تذكرة الطيران هذا إلى جديد؟" groups="mowzf_hrms.group_air_ticket_set_draft"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button type="object" name="open_old_requests" icon="fa-plane" class="oe_inline oe_stat_button">
+                                <field string="تذاكر الطيران القديمة للموظف" name="count_old_requests" widget="statinfo"/>
+                            </button>
+                            <button type="object" name="open_allocations" icon="fa-plane" class="oe_inline oe_stat_button">
+                                <field string="تخصيص تذكرة الطيران" name="count_allocations" widget="statinfo"/>
+                            </button>
+                            <button type="object" name="open_leave_requests" icon="fa-arrow-left" class="oe_inline oe_stat_button">
+                                <field string="طلبات الإجازة" name="count_leave_requests" widget="statinfo"/>
+                            </button>
+                            <button type="object" name="open_exit_rentry_requests" icon="fa-flag" class="oe_inline oe_stat_button">
+                                <field string="طلبات الخروج والعودة المرتبطة" name="count_exit_rentry" widget="statinfo"/>
+                            </button>
+                            <button type="object" name="open_loan_request" icon="fa-money" class="oe_inline oe_stat_button" invisible="employee_share &lt;= 0 or employee_share_method != 'debit'">
+                                <field string="طلب القرض" name="count_loan_request" widget="statinfo"/>
+                            </button>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="name" groups="hr.group_hr_user"/>
+                                <field name="description" readonly="state not in ['new', 'reviewed']"/>
+                                <field name="employee_id" options="{'no_create': True}" readonly="state not in ['new', 'reviewed']"/>
+                                <field name="branch_id" groups="base.group_no_one" readonly="1"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="department_id" groups="base.group_no_one" readonly="1"/>
+                                <field name="job_id" groups="base.group_no_one" readonly="1"/>
+                                <field name="country_id" groups="base.group_no_one" readonly="1"/>
+                                <field name="employee_nationality" groups="base.group_no_one" readonly="1"/>
+                                <field name="iqama_id" readonly="1" groups="base.group_no_one"/>
+                                <field name="iqama_expiry_date" readonly="1" groups="base.group_no_one"/>
+                                <field name="passport_no" readonly="1" groups="base.group_no_one"/>
+                                <field name="passport_expiry_date" readonly="1" groups="base.group_no_one"/>
+                                <field name="request_reason" readonly="state not in ['new', 'reviewed']"/>
+                                <field name="reason_detail" invisible="request_reason != 'Other'" required="request_reason == 'Other'"/>
+                                <field name="air_ticket_type" options="{'no_create': True}" required="not contract_type_equal_leave_type" readonly="state == 'approved'" domain="[['nationality','in',[employee_nationality,'All Nationalities']],['state','=','Approved'],['type','=','non-annual']]"/>
+                                <field name="show_remaining" invisible="1"/>
+                                <label for="current_air_ticket_balance" invisible="not show_remaining"/>
+                                <div invisible="not show_remaining">
+                                    <field name="current_air_ticket_balance" readonly="1" class="oe_inline"/>
+                                    أشهر
+                                </div>
+                                <label for="deduct" invisible="not show_remaining"/>
+                                <div invisible="not show_remaining">
+                                    <field name="deduct" class="oe_inline" readonly="state not in ['new', 'reviewed']"/>
+                                    أشهر
+                                </div>
+                                <label for="remaining_balance" invisible="not show_remaining"/>
+                                <div invisible="not show_remaining">
+                                    <field name="remaining_balance" readonly="1" class="oe_inline"/>
+                                    أشهر
+                                </div>
+                                <button string="تحديث البيانات" name="get_remaining" type="object" invisible="not show_remaining or state in ('approved', 'refused')" confirm="تنبيه، الغرض من هذا الزر هو إعادة تحميل رصيد تذكرة الطيران للموظف. قد يتغير رصيد الموظف إذا قمت بتحديث البيانات"/>
+                                <div/>
+                                <field name="loan_request_id" readonly="1" groups="hr.group_hr_user" invisible="not loan_request_id"/>
+                                <field name="air_ticket_type_can_request_exit_rentry" invisible="1"/>
+                                <field name="request_date" groups="hr.group_hr_user" readonly="state not in ['new', 'reviewed']"/>
+                                <field name="last_return_from_leave" groups="hr.group_hr_user" readonly="state not in ['new', 'reviewed']"/>
+                                <field name="total_working_days" groups="hr.group_hr_user" readonly="state not in ['new', 'reviewed']"/>
+                            </group>
+                            <group>
+                                <label for="leave_from" string="بداية الإجازة / تاريخ النهاية"/>
+                                <div invisible="request_reason not in ('leave', 'Deputation / business trip')">
+                                    <field name="leave_from" readonly="1" class="oe_inline"/>
+                                    <label for="leave_from" string="-" class="oe_inline"/>
+                                    <field name="leave_to" readonly="1" class="oe_inline"/>
+                                </div>
+                                <field name="travel_date" readonly="state not in ['new', 'reviewed']"/>
+                                <field name="expected_return_date" readonly="1"/>
+                                <!-- <field name="contract_id" groups="hr.group_hr_user"/> --> <!-- Commented out - hr.contract not available in Odoo 19 -->
+                                <field name="contract_leave_policy" groups="base.group_no_one"/>
+                                <field name="air_ticket_policy" groups="base.group_no_one"/>
+                                <field name="reserve_ticket_for" readonly="relatives_tickets == 'Never allow tickets for relatives' or state not in ('new', 'reviewed')"/>
+                                <field name="cash_allowed"/>
+                                <field name="i_want_to" readonly="cash_allowed == 'No' or state not in ['new', 'reviewed']"/>
+                                <field name="payment_time" invisible="i_want_to != 'Cash'" readonly="state == 'approved' or i_want_to != 'Cash'"/>
+                                <field name="paid_through_reconciliation" groups="base.group_no_one" readonly="state not in ['new', 'reviewed']"/>
+                                <field name="can_request_exit_rentry" 
+                                       readonly="(employee_nationality == 'Non-native' and i_want_to == 'cash' and air_ticket_type_can_request_exit_rentry == 'yes') or state not in ('new', 'reviewed')"
+                                       required="employee_nationality != 'Non-native' and i_want_to != 'cash' and air_ticket_type_can_request_exit_rentry != 'yes'"/>
+                                <field name="linked_exit_rentry_id" readonly="1" invisible="employee_nationality != 'Non-native' or can_request_exit_rentry != 'yes' or not loan_request_id"/>
+                                <field name="linked_mission_id" readonly="1"/>
+                                <field name="number_of_relatives" invisible="relatives_tickets != 'Allow tickets for relatives'" groups="hr.group_hr_user" readonly="1"/>
+                                <field name="batch_id" readonly="1"/>
+                                <field name="payment_done" groups="account.group_account_user,account.group_account_manager" readonly="state != 'approved'"/>
+                            </group>
+                            <group>
+                                <field name="leave_request_type_id" invisible="1"/>
+                                <field name="contract_type_equal_leave_type" groups="base.group_no_one"/>
+                                <field name="ticket_allowance_per_contract" readonly="1" invisible="request_reason != 'Air Ticket Cash Allowance'"/>
+                                <field name="ticket_total_price" readonly="state not in ['new', 'reviewed']"/>
+                                <field name="company_share" invisible="i_want_to == 'Cash'" readonly="state not in ['new', 'reviewed']"/>
+                                <field name="employee_share" invisible="i_want_to == 'Cash'" readonly="state not in ['new', 'reviewed']"/>
+                                <field name="employee_share_method" invisible="employee_share &lt; 1" required="employee_share &gt; 0 and i_want_to == 'Reserve a ticket through company'" readonly="state not in ['new', 'reviewed']"/>
+                                <field name="loan_type_id" readonly="1" groups="base.group_no_one"/>
+                                <field name="relatives_tickets" groups="hr.group_hr_user"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="تفاصيل تذكرة الطيران">
+                                <field name="air_ticket_details">
+                                    <list create="false" delete="false" editable="bottom">
+                                        <field name="check_box"/>
+                                        <field name="name" readonly="1"/>
+                                        <field name="name_in_passport" required="check_box"/>
+                                        <field name="relation" readonly="1"/>
+                                        <field name="ticket_type" readonly="not check_box"/>
+                                        <field name="departure_date"/>
+                                        <field name="departure_airport"/>
+                                        <field name="flight_number"/>
+                                        <field name="airlines"/>
+                                        <field name="return_date" readonly="ticket_type != 'Return'"/>
+                                        <field name="return_airport" readonly="ticket_type != 'Return'"/>
+                                        <field name="return_flight_number" readonly="ticket_type != 'Return'"/>
+                                        <field name="return_airlines" readonly="ticket_type != 'Return'"/>
+                                        <field name="ticket_price" readonly="not check_box"/>
+                                        <field name="notes"/>
+                                        <field name="date_of_birth" invisible="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="معلومات أخرى" groups="hr.group_hr_user">
+                                <group>
+                                    <group>
+                                        <field name="create_date" readonly="1"/>
+                                        <field name="create_uid" readonly="1"/>
+                                    </group>
+                                    <group>
+                                        <field name="reviewed_by"/>
+                                        <field name="reviewed_on"/>
+                                        <field name="confirmed_by"/>
+                                        <field name="confirmed_on"/>
+                                    </group>
+                                    <group>
+                                        <field name="skip_valid_approve_req" groups="hr.group_hr_manager" readonly="state not in ['new', 'reviewed']"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="تذاكر الطيران القديمة">
+                                <group>
+                                    <field name="old_tickets_request_ids" nolabel="1" readonly="1" force_save="1"/>
+                                </group>
+                            </page>
+                            <page string="المرفقات">
+                                <group string="المرفقات">
+                                    <field name="attachment_ids" nolabel="1" readonly="state not in ['new', 'reviewed']">
+                                        <list editable="bottom">
+                                            <field name="file" required="1" filename="file_name"/>
+                                            <field name="name" required="1"/>
+                                            <field name="file_name" invisible="1"/>
+                                            <field name="note"/>
+                                        </list>
+                                    </field>
+                                </group>
+                            </page>
+                            <page string="ملاحظات">
+                                <group string="ملاحظات">
+                                    <field name="note" nolabel="1"  readonly="state not in ['new', 'reviewed']"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_air_ticket_request_list" model="ir.ui.view">
+            <field name="name">air.ticket.request.list</field>
+            <field name="model">air.ticket.request</field>
+            <field name="arch" type="xml">
+                <list string="Air Ticket Requests">
+                    <field name="name"/>
+                    <field name="employee_id"/>
+                    <field name="request_date"/>
+                    <field name="travel_date"/>
+                    <field name="state"/>
+                    <field name="ticket_total_price"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="action_air_ticket_request" model="ir.actions.act_window">
+            <field name="name">Air Ticket Requests</field>
+            <field name="res_model">air.ticket.request</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="view_air_ticket_request_list"/>
+        </record>
+
+        <menuitem id="menu_air_ticket_request" name="Air Ticket Requests" action="action_air_ticket_request" parent="hr.menu_hr_main"/>
+    </data>
+</odoo>

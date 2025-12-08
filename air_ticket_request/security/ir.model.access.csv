@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_air_ticket_request,air.ticket.request,model_air_ticket_request,base.group_user,1,1,1,1
+access_air_ticket_request_batch,air.ticket.request.batch,model_air_ticket_request_batch,base.group_user,1,1,1,1
+access_air_ticket_type,air.ticket.type,model_air_ticket_type,base.group_user,1,1,1,0
+access_air_ticket_details,air.ticket.details,model_air_ticket_details,base.group_user,1,1,1,1
+access_air_ticket_balance_allocation,air.ticket.balance.allocation,model_air_ticket_balance_allocation,base.group_user,1,1,1,1
+access_air_ticket_balance_attachment,access_air_ticket_balance_attachment,model_air_ticket_balance_attachment,base.group_user,1,1,1,0
+access_air_ticket_automatic_allocation,access_air_ticket_automatic_allocation,model_air_ticket_automatic_allocation,base.group_user,1,1,1,0
+air_ticket_request.access_air_ticket_request_attachment,access_air_ticket_request_attachment,air_ticket_request.model_air_ticket_request_attachment,base.group_user,1,0,0,0

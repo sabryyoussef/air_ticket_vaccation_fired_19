@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <!-- Inherit the base country list view -->
+    <record id="view_country_list_inherit" model="ir.ui.view">
+        <field name="name">res.country.list.inherit</field>
+        <field name="model">res.country</field>
+        <field name="inherit_id" ref="base.view_country_tree"/>
+        <field name="arch" type="xml">
+            <!-- Add your specific fields after the name field -->
+            <field name="name" position="after">
+                <field name="max_gosi_amount"/>
+                <field name="arabic_name"/>
+                <field name="gosi_for_this"/>
+                <field name="company_share"/>
+                <field name="employee_share"/>
+                <field name="gosi_calc_based_on"/>
+                <field name="who_will_pay"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Inherit the base country form view -->
+    <record id="view_country_form_inherit" model="ir.ui.view">
+        <field name="name">res.country.form.inherit</field>
+        <field name="model">res.country</field>
+        <field name="inherit_id" ref="base.view_country_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add arabic_name and is_saudi to country_details group -->
+            <xpath expr="//group[@name='country_details']" position="inside">
+                <field name="arabic_name"/>
+                <field name="is_saudi"/>
+            </xpath>
+            
+            <!-- Add GOSI settings after phone_vat_settings -->
+            <xpath expr="//group[@name='phone_vat_settings']" position="after">
+                <group name="gosi_settings" string="GOSI Settings">
+                    <field name="gosi_for_this"/>
+                    <field name="gosi_calc_based_on"/>
+                    <field name="minimum_gosi_salary"/>
+                    <field name="max_gosi_amount"/>
+                    <field name="salary_for_gosi"/>
+                    <field name="manual_gosi_salary"/>
+                    <field name="who_will_pay"/>
+                    <field name="company_share"/>
+                    <field name="employee_share"/>
+                    <field name="start_gosi_payslip_date"/>
+                </group>
+            </xpath>
+            
+            <!-- Add air ticket prices -->
+            <xpath expr="//group[@name='gosi_settings']" position="after">
+                <group name="air_ticket_prices" string="Air Ticket Prices">
+                    <field name="one_way_price"/>
+                    <field name="return_price"/>
+                    <field name="company_amount"/>
+                    <field name="employee_amount"/>
+                </group>
+            </xpath>
+            
+            <!-- Add contract settings -->
+            <xpath expr="//group[@name='air_ticket_prices']" position="after">
+                <group name="contract_settings" string="Contract Settings">
+                    <!-- <field name="contract_id"/> --> <!-- Commented out - hr.contract not available in Odoo 19 -->
+                    <field name="renew_before_contract"/>
+                    <field name="eos_notice_period"/>
+                    <field name="check_passport_expiry"/>
+                    <field name="check_iqama_expiry"/>
+                </group>
+            </xpath>
+            
+            <!-- Add employee information -->
+            <xpath expr="//group[@name='contract_settings']" position="after">
+                <group name="employee_info" string="Employee Information">
+                    <field name="count_employees"/>
+                    <field name="employee_ids" widget="many2many_tags"/>
+                </group>
+            </xpath>
+            
+            <!-- Add notes field after states -->
+            <xpath expr="//field[@name='state_ids']" position="after">
+                <group name="notes_section">
+                    <field name="note"/>
+                </group>
+            </xpath>
+            
+        </field>
+    </record>
+        
+        <record id="countries_air_ticket_prices_action" model="ir.actions.act_window">
+            <field name="name">air ticket prices</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.country</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No Country Found!
+                </p><p>
+                    Manage the list of countries that can be set on your contacts.
+                </p>
+            </field>
+        </record>
+    <menuitem id="menu_air_ticket_prices"
+              name="Air tickets prices"
+               parent="air_ticket_request.menu_air_ticket_request"
+              action="countries_air_ticket_prices_action"/>
+</odoo>

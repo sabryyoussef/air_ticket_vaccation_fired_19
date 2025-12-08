@@ -1,0 +1,25 @@
+{
+    "name": "Mowzf - Air Ticket Request (recreated)",
+    "version": "1.0",
+    "summary": "Recreated air.ticket.request model and views from debug mode",
+    "description": "Recreate air ticket request model and views from debug mode (developer extracted fields)",
+    "category": "Human Resources",
+    "author": "Generated",
+    "depends": ["base", "mail", "hr", "hr_holidays", "account"],
+    "data": 
+        [
+        "security/ir.model.access.csv",
+        "data/sequence_air_ticket_request.xml",
+        # "views/air_ticket_request_views.xml",
+        "views/air_ticket_form.xml",
+        "views/air_ticked_type.xml",
+        "views/air_ticket_batch_views.xml",
+        "views/air_ticket_automatic_allocation.xml",
+        "views/air_ticket_balance_allocation.xml",
+        "views/country_inherit.xml",
+        # "views/air_ticket_details_views.xml",
+    ],
+    'images': ['static/description/banner.jpg'],
+    "installable": True,
+    "application": False,
+}
