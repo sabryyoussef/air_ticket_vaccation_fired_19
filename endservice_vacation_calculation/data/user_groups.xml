@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
-        <!-- Assign admin user to officer group -->
-        <record id="base.user_admin" model="res.users">
-            <field name="groups_id" eval="[(4, ref('endservice_vacation_calculation.hr_vacation_calculation_group_officer'))]"/>
-        </record>
-    </data>
-</odoo>
